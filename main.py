@@ -131,7 +131,4 @@ while game_on:
             ball.bounce_y_wall()
             wall_manager.delete_wall(wall)
 
-    
-
-
 screen.exitonclick()
