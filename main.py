@@ -52,7 +52,7 @@ class Ball(Turtle):
         if self.ycor() > 290:
             self.bounce_y_wall()
 
-        if self.distance(paddle) < 10:
+        if self.distance(paddle) < 31:
             self.bounce_y()
 
     def bounce_x(self):
@@ -77,12 +77,20 @@ class Walls:
     def __init__(self):
         self.all_walls = []
     
-    def create_walls(self):
-        new_wall = Turtle('square')
-        new_wall.shapesize(stretch_wid=1, stretch_len=2)
-        new_wall.penup()
-        new_wall.color(random.choice(COLORS))
-        new_wall.goto(595, 250)
+    def create_walls(self, xcor, ycor):
+        for num in range(1, 8):
+            new_wall = Turtle('square')
+            new_wall.shapesize(stretch_wid=1, stretch_len=4)
+            new_wall.penup()
+            new_wall.color(random.choice(COLORS))
+            new_wall.goto(xcor, ycor)
+            self.all_walls.append(new_wall)
+
+    def delete_wall(self, wall):
+        wall.goto(-20, -800)
+        #for walls in self.all_walls:
+         #   walls.goto(xcor, ycor)
+
 
 
 screen = Screen()
@@ -94,9 +102,20 @@ screen.tracer(0)
 paddle = Paddle((0, -280))
 ball = Ball()
 wall_manager = Walls()
+
 screen.listen()
 screen.onkeypress(paddle.move_right, "Right")
 screen.onkeypress(paddle.move_left, "Left")
+
+ycor = 240
+xcor = range(-585, 585, 92)
+
+for x in xcor:
+    wall_manager.create_walls(xcor=x, ycor=ycor)
+    wall_manager.create_walls(xcor=x+25, ycor=200)
+    wall_manager.create_walls(xcor=x, ycor=160)
+    wall_manager.create_walls(xcor=x+25, ycor=120)
+    wall_manager.create_walls(xcor=x, ycor=80)
 
 game_on = True
 while game_on:
@@ -104,11 +123,15 @@ while game_on:
     screen.update()
     ball.move(paddle)
 
-    if ball.distance(paddle) < 31:
-        ball.bounce_y()
-
     if ball.ycor() < -320:
         ball.reset()
+
+    for wall in wall_manager.all_walls:
+        if wall.distance(ball) < 31:
+            ball.bounce_y_wall()
+            wall_manager.delete_wall(wall)
+
+    
 
 
 screen.exitonclick()
